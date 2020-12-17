@@ -1,9 +1,10 @@
 import math
 
 import numpy as np
-from sklearn.decomposition import PCA, KernelPCA
+from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import accuracy_score
@@ -19,7 +20,7 @@ def load_data(pca_on=False):
     features, targets = dataset["features"], dataset["targets"]
 
     if pca_on:
-        pca = KernelPCA(n_components=32, random_state=random_seed)
+        pca = PCA(n_components=32, random_state=random_seed)
         pca.fit(features)
         # print("explained_variance_ratio:", pca.explained_variance_ratio_)
         features = pca.transform(features)
@@ -51,7 +52,8 @@ def train(features, targets):
  
     clf = make_pipeline(
         StandardScaler(),
-        LogisticRegression(max_iter=10000, tol=1e-4, random_state=random_seed)
+        LogisticRegression(max_iter=10000, C=1., tol=1e-4, random_state=random_seed)
+        # SVC(max_iter=1000, probability=True, random_state=random_seed)
     )
     clf.fit(features, targets)
 
